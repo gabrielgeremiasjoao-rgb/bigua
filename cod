@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeZone | Desafios</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #090d18;
+    color: #f4f6ff;
+}
+
+header {
+    padding: 22px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #11182a;
+    border-bottom: 1px solid #252d42;
+}
+
+.logo {
+    color: #5cf2bd;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    max-width: 850px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.hero {
+    padding: 35px 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #182744, #242052);
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.hero span {
+    color: #5cf2bd;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 13px 18px;
+    background: #5cf2bd;
+    color: #08151b;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.card {
+    margin-top: 22px;
+    padding: 24px;
+    border: 1px solid #29334c;
+    border-radius: 16px;
+    background: #11182a;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    text-align: left;
+    background: #202a40;
+    color: white;
+    border: 1px solid #35415b;
+}
+
+.option.selected {
+    border: 2px solid #5cf2bd;
+}
+
+#feedback {
+    margin-top: 18px;
+    line-height: 1.6;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    text-align: center;
+    margin-top: 22px;
+}
+
+.stats div {
+    flex: 1;
+    background: #11182a;
+    border-radius: 12px;
+    padding: 18px 8px;
+}
+
+.stats strong {
+    display: block;
+    color: #5cf2bd;
+    font-size: 24px;
+}
+
+footer {
+    text-align: center;
+    color: #909bb4;
+    padding: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">⚡ CodeZone</div>
+    <a href="#desafio">Jogar agora ↓</a>
+</header>
+
+<main>
+    <section class="hero">
+        <h1>Aprenda. <span>Programe.</span> Evolua.</h1>
+        <p>Teste sua lógica e torne-se um mestre da programação!</p>
+        <button onclick="iniciar()">Começar desafio</button>
+    </section>
+
+    <section class="stats">
+        <div>
+            <strong id="pontos">0</strong>
+            Pontos
+        </div>
+        <div>
+            <strong id="questao">0/5</strong>
+            Questões
+        </div>
+    </section>
+
+    <section class="card" id="desafio">
+        <h2>🎯 Desafio de lógica</h2>
+        <p id="pergunta">Clique em "Começar desafio" para iniciar!</p>
+        <div id="opcoes"></div>
+        <p id="feedback"></p>
+        <button id="proximo" onclick="avancar()" hidden>
+            Próxima pergunta →
+        </button>
+    </section>
+
+    <section class="card">
+        <h2>💡 O que você vai aprender?</h2>
+        <p>🧠 Lógica de programação</p>
+        <p>📦 Variáveis e operadores</p>
+        <p>🔀 Condições e decisões</p>
+        <p>⚙️ Funções e resolução de problemas</p>
+    </section>
+</main>
+
+<footer>
+    CodeZone © 2026 — Seu próximo nível começa aqui.
+</footer>
+
+<script>
+const perguntas = [
+    {
+        texto: "Quanto é 5 + 3?",
+        opcoes: ["6", "8", "10"],
+        correta: 1,
+        explicacao: "A soma de 5 e 3 é 8."
+    },
+    {
+        texto: "Qual palavra cria uma condição em Python?",
+        opcoes: ["if", "print", "input"],
+        correta: 0,
+        explicacao: "if permite executar código conforme uma condição."
+    },
+    {
+        texto: "Qual é o resultado de 4 * 3?",
+        opcoes: ["7", "12", "9"],
+        correta: 1,
+        explicacao: "O operador * realiza uma multiplicação."
+    },
+    {
+        texto: "Para que serve uma variável?",
+        opcoes: [
+            "Armazenar dados",
+            "Desligar o computador",
+            "Apagar o programa"
+        ],
+        correta: 0,
+        explicacao: "Variáveis armazenam valores que o programa utiliza."
+    },
+    {
+        texto: "Qual palavra define uma função em Python?",
+        opcoes: ["loop", "function", "def"],
+        correta: 2,
+        explicacao: "Em Python, def inicia a definição de uma função."
+    }
+];
+
+let indice = 0;
+let pontos = 0;
+let respondido = false;
+let iniciado = false;
+
+function iniciar() {
+    indice = 0;
+    pontos = 0;
+    iniciado = true;
+    document.getElementById("pontos").textContent = pontos;
+    mostrarPergunta();
+    document.getElementById("desafio").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function mostrarPergunta() {
+    respondido = false;
+    const p = perguntas[indice];
+
+    document.getElementById("questao").textContent =
+        `${indice + 1}/5`;
+    document.getElementById("pergunta").textContent = p.texto;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("proximo").hidden = true;
+
+    const area = document.getElementById("opcoes");
+    area.innerHTML = "";
+
+    p.opcoes.forEach((opcao, i) => {
+        const botao = document.createElement("button");
+        botao.className = "option";
+        botao.textContent = opcao;
+        botao.onclick = () => responder(i);
+        area.appendChild(botao);
+    });
+}
+
+function responder(escolha) {
+    if (respondido || !iniciado) return;
+    respondido = true;
+
+    const p = perguntas[indice];
+    const botoes = document.querySelectorAll(".option");
+
+    botoes.forEach(botao => botao.disabled = true);
+
+    if (escolha === p.correta) {
+        pontos += 10;
+        document.getElementById("feedback").textContent =
+            "✅ Correto! " + p.explicacao;
+    } else {
+        document.getElementById("feedback").textContent =
+            "❌ Não foi dessa vez. " + p.explicacao;
+    }
+
+    document.getElementById("pontos").textContent = pontos;
+    document.getElementById("proximo").hidden = false;
+
+    if (indice === perguntas.length - 1) {
+        document.getElementById("proximo").textContent =
+            "Ver resultado";
+    }
+}
+
+function avancar() {
+    if (!respondido) return;
+
+    if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+    } else {
+        document.getElementById("pergunta").textContent =
+            `Você terminou! Sua pontuação foi ${pontos}/50.`;
+        document.getElementById("opcoes").innerHTML = "";
+        document.getElementById("feedback").textContent =
+            pontos === 50
+                ? "🏆 Perfeito! Você acertou todas!"
+                : "Continue praticando para melhorar sua pontuação!";
+        document.getElementById("proximo").hidden = true;
+        document.getElementById("questao").textContent = "5/5";
+        iniciado = false;
+    }
+}
+</script>
+
+</body>
+</html>
